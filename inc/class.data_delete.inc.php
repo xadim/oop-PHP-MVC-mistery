@@ -1,37 +1,45 @@
 <?php
+
+include "init.php";
+
 class data_delete
 {
-        //Variables for MySql connection
+	//Variable for MySql connection
 	private $hookup;
 	private $sql;
 	private $tableMaster;
  
-        //From HTML
-        private $deadman;
- 
+	//Field Variables
+	private $id;
+
 	public function __construct()
 	{
-	    $this->deadman =intval($_POST['idd']);
-            //Get table name and make connection
-            $this->tableMaster="basics";
-	    $this->hookup=UniversalConnect::doConnect();
-	    $this->recordKill();
-	    $this->hookup->close();	
+        $this->tableMaster="applicants";
+	    $this->hookup=Database::obtain();
+ 
+	    $this->id=$_GET['delete'];
+	    $this->doDelete();
+	    $this->hookup->close();
 	}
  
-	private function recordKill()
+	private function doDelete()
 	{
-            //Create Query Statement
-	    $this->sql ="Delete FROM $this->tableMaster WHERE id='$this->deadman'";
+		$this->sql = "DELETE FROM $this->tableMaster WHERE id like $this->id";
+
+		try
+		{	
+			$this->hookup->query($this->sql);
+				header('Location: ../index.php?delete='.$this->id);
+		}
  
-	    try
-	    {
-		$result = $this->hookup->query($this->sql);
-		printf("Record with ID=%s: has been dropped.<br />",$this->deadman );
-	    }
-	    catch(Exception $e)
-	    {
-		echo "Here's what went wrong: " . $e->getMessage();
-	    }
+		catch (Exception $e)
+		{
+			echo "There is a problem: " . $e->getMessage();
+			exit();
+		}
 	}
 }
+
+$obj = new data_delete;
+ 
+$obj->doDelete();

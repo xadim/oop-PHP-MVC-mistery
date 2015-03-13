@@ -1,4 +1,6 @@
 <?php
+
+
 class data_entry
 {
 	//Variable for MySql connection
@@ -8,19 +10,20 @@ class data_entry
  
 	//Field Variables
 	private $name;
-	private $email;
+	private $attacks;
 	private $lang;
- 
+
 	public function __construct()
 	{
 	    //Get table name and make connection
-            $this->tableMaster="basics";
-	    $this->hookup=UniversalConnect::doConnect();
+        $this->tableMaster="applicants";
+	    $this->hookup=Database::obtain();
  
 	    //Get data from HTML form
 	    $this->name=$_POST['name'];
-	    $this->email=$_POST['email'];
-	    $this->lang=$_POST['lang'];
+	    $this->email=$_POST['attacks'];
+	    $this->lang=$_POST['health'];
+	    $this->damage=$_POST['damage'];
  
 	    //Call private methods for MySql operations
 	    $this->doInsert();
@@ -29,12 +32,12 @@ class data_entry
  
 	private function doInsert()
 	{
-		$this->sql = "INSERT INTO $this->tableMaster (name,email,lang) VALUES ('$this->name','$this->email', '$this->lang')";
+		$this->sql = "INSERT INTO $this->tableMaster (name,attacks,health,damage) VALUES ('$this->name','$this->attacks', '$this->health', '$this->damage')";
  
 		try
 		{	
 			$this->hookup->query($this->sql);
-			printf("User name: %s <br/> Email: %s <br/> uses %s the most for programming.",$this->name,$this->email,$this->lang);
+				header('Location: ../index.php?insert=success');
 		}
  
 		catch (Exception $e)

@@ -2,38 +2,47 @@
 class data_display
 {
 	//Variable for MySql connection
-	private $hookup;
-	private $sql;
-	private $tableMaster;
+	public $rows = array();
+	public $sql;
+	public $tableMaster;
  
 	public function __construct()
 	{
-	    //Get table name and make connection
-            $this->tableMaster="basics";
-	    $this->hookup=UniversalConnect::doConnect();
+	    $this->tableMaster="applicants";
 	    $this->doDisplay();
-	    $this->hookup->close();	
 	}
  
-	private function doDisplay()
+	public function doDisplay()
 	{
             //Create Query Statement
 	    $this->sql ="SELECT * FROM $this->tableMaster";
- 
-	    try
-	    {
-		$result = $this->hookup->query($this->sql);
- 
-		while ($row = $result->fetch_assoc()) 
+ 		$rows = array();
+
+		$result = mysql_query($this->sql);
+		while ($row = mysql_fetch_array($result)) 
 		{
-		    printf("ID: %s Name: %s Email: %s <br />Computer Language: %s<p />",$row['id'], $row['name'],$row['email'],$row['lang'] );
+			$rows[] = $row;
+			//print_r($rows);
 		}
  
-		$result->close();
-	    }
-	    catch(Exception $e)
-	    {
-		echo "Here's what went wrong: " . $e->getMessage();
-	    }
+		return $rows;
+	}
+
+	public function do_display($id)
+	{
+            //Create Query Statement
+	    $this->sql ="SELECT * FROM $this->tableMaster where id = $id";
+ 		$rows = array();
+
+		$result = mysql_query($this->sql);
+		while ($row = mysql_fetch_array($result)) 
+		{
+			$rows[] = $row;
+			//print_r($rows);
+		}
+ 
+		return $rows;
 	}
 }
+
+
